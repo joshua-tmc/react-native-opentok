@@ -1,14 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "RNOpenTokSubscriberView.h"
 
-#if __has_include(<React/UIView+React.h>)
-#import "React/UIView+React.h"
-#elif __has_include("UIView+React.h")
-#import <React/UIView+React.h>
-#else
-#import "React/UIView+React.h"
-#endif
-
 @interface RNOpenTokSubscriberView () <OTSubscriberDelegate>
 @end
 
@@ -18,16 +10,6 @@
 
 @synthesize sessionId = _sessionId;
 @synthesize session = _session;
-
-- (void)reactSetFrame:(CGRect)frame {
-    [super reactSetFrame: frame];
-
-    if (_subscriber == nil) {
-        return;
-    }
-
-    [_subscriber.view setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-}
 
 - (void)didMoveToWindow {
     [super didMoveToSuperview];

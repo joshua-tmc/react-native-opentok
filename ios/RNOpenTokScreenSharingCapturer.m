@@ -122,7 +122,7 @@
 /**
  * Dispatch lambda function to stop the queue from invoking handler block.
  */
-- (void)stopCapture
+- (int32_t)stopCapture
 {
     _capturing = NO;
     dispatch_sync(_queue, ^{

@@ -68,8 +68,13 @@ public class RNOpenTokSubscriberView extends RNOpenTokView implements Subscriber
     }
 
     private void cleanUpSubscriber() {
-        removeView(mSubscriber.getView());
-        mSubscriber = null;
+        // removeView(mSubscriber.getView()); refer to https://github.com/callstack/react-native-opentok/pull/89
+        // mSubscriber = null;
+        if ( mSubscriber != null ) {
+            removeView(mSubscriber.getView());     
+            mSubscriber.destroy();
+            mSubscriber = null;
+       }
     }
 
     public void onStreamReceived(Session session, Stream stream) {
@@ -89,7 +94,9 @@ public class RNOpenTokSubscriberView extends RNOpenTokView implements Subscriber
     public void onConnected(SubscriberKit subscriberKit) {}
 
     @Override
-    public void onDisconnected(SubscriberKit subscriberKit) {}
+    public void onDisconnected(SubscriberKit subscriberKit) {
+        cleanUpSubscriber(); // refer to https://github.com/callstack/react-native-opentok/pull/89
+    }
 
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
@@ -97,6 +104,8 @@ public class RNOpenTokSubscriberView extends RNOpenTokView implements Subscriber
         payload.putString("connectionId", opentokError.toString());
 
         sendEvent(Events.EVENT_SUBSCRIBE_ERROR, payload);
+
+        cleanUpSubscriber(); // https://github.com/callstack/react-native-opentok/pull/89
     }
 
 }

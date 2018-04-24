@@ -5,14 +5,11 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.util.ReactFindViewUtil;
-import com.opentok.android.BaseVideoCapturer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
-
-import android.hardware.Camera;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -21,13 +18,7 @@ public class RNOpenTokPublisherView extends RNOpenTokView implements PublisherKi
     private Boolean mAudioEnabled;
     private Boolean mVideoEnabled;
     private Boolean mScreenCapture;
-    private CameraDirection mCameraDirection;
     private ReadableMap mScreenCaptureSettings;
-
-    public enum CameraDirection {
-        BACK,
-        FRONT,
-    };
 
     public RNOpenTokPublisherView(ThemedReactContext context) {
         super(context);
@@ -65,39 +56,6 @@ public class RNOpenTokPublisherView extends RNOpenTokView implements PublisherKi
         if (mPublisher != null) {
             mPublisher.cycleCamera();
         }
-    }
-
-    public void setCameraDirection(CameraDirection cameraDirection) {
-        mCameraDirection = cameraDirection;
-        if (mPublisher != null) {
-            updateCameraDirection();
-        }
-    }
-
-    private void updateCameraDirection() {
-        if (mPublisher.getCapturer() instanceof BaseVideoCapturer.CaptureSwitch) {
-            ((BaseVideoCapturer.CaptureSwitch)mPublisher.getCapturer()).swapCamera(getCameraIndex(mCameraDirection));
-        }
-    }
-
-    private static int getCameraIndex(CameraDirection cameraDirection) {
-        int facing;
-        switch (cameraDirection) {
-            case BACK: facing = Camera.CameraInfo.CAMERA_FACING_BACK; break;
-            case FRONT: facing = Camera.CameraInfo.CAMERA_FACING_FRONT; break;
-            default: throw new IllegalArgumentException("Invalid cameraDirection value");
-        }
-
-        int numCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == facing) {
-                return i;
-            }
-        }
-
-        throw new MissingCameraException("Cannot find camera facing " + cameraDirection);
     }
 
     public void setScreenCapture(Boolean enabled) {
@@ -141,10 +99,6 @@ public class RNOpenTokPublisherView extends RNOpenTokView implements PublisherKi
             mPublisher.setAudioFallbackEnabled(false);
         }
 
-        if (mCameraDirection != null) {
-            updateCameraDirection();
-        }
-
         Session session = RNOpenTokSessionManager.getSessionManager().getSession(mSessionId);
         session.publish(mPublisher);
 
@@ -158,7 +112,7 @@ public class RNOpenTokPublisherView extends RNOpenTokView implements PublisherKi
 
     private void cleanUpPublisher() {
         removeView(mPublisher.getView());
-        mPublisher.destroy();
+        //mPublisher.destroy();  refer to https://github.com/callstack/react-native-opentok/pull/88
         mPublisher = null;
     }
 
@@ -186,11 +140,5 @@ public class RNOpenTokPublisherView extends RNOpenTokView implements PublisherKi
 
         sendEvent(Events.EVENT_PUBLISH_ERROR, payload);
         cleanUpPublisher();
-    }
-
-    private static class MissingCameraException extends RuntimeException {
-        MissingCameraException(String message) {
-            super(message);
-        }
     }
 }

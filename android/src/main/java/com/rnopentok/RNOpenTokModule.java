@@ -23,11 +23,6 @@ public class RNOpenTokModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setApiKey(String apiKey) {
-        RNOpenTokSessionManager.getSessionManager().setApiKey(apiKey);
-    }
-
-    @ReactMethod
     public void connect(String sessionId, String token, Promise promise) {
         Session session = RNOpenTokSessionManager.getSessionManager().connectToSession(sessionId, token);
         session.setSessionListener(RNOpenTokSessionManager.getSessionManager());

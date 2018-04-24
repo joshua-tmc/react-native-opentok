@@ -35,11 +35,6 @@ public class RNOpenTokPublisherViewManager extends RNOpenTokViewManager<RNOpenTo
         }
     }
 
-    @ReactProp(name = "cameraDirection")
-    public void setCameraDirection(RNOpenTokPublisherView view, String cameraDirection) {
-        view.setCameraDirection(RNOpenTokPublisherView.CameraDirection.valueOf(cameraDirection.toUpperCase()));
-    }
-
     @ReactProp(name = "screenCapture")
     public void setScreenCapture(RNOpenTokPublisherView view, Boolean screenCapture) {
         view.setScreenCapture(screenCapture);

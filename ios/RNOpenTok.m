@@ -8,10 +8,6 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(setApiKey:(NSString *)apiKey) {
-    [[RNOpenTokSessionManager sessionManager] setApiKey:apiKey];
-}
-
 RCT_EXPORT_METHOD(connect:(NSString *)sessionId withToken:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
     OTSession* session = [[RNOpenTokSessionManager sessionManager] connectToSession:sessionId withToken:token];
     session.delegate = self;
