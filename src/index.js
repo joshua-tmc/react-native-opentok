@@ -82,8 +82,8 @@ export default {
     ON_SESSION_DID_RECONNECT: 'onSessionDidReconnect',
   },
 
-  connect: (sessionId: string, token: string): Promise<boolean | Error> =>
-    NativeModules.RNOpenTok.connect(sessionId, token),
+  connect: (sessionId: string, token: string, apiKey: string): Promise<boolean | Error> =>
+    NativeModules.RNOpenTok.connect(sessionId, token, apiKey),
 
   disconnect: (sessionId: string): void => {
     NativeModules.RNOpenTok.disconnect(sessionId);

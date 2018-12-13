@@ -19,30 +19,20 @@ import java.util.HashMap;
 public class RNOpenTokSessionManager implements Session.SessionListener, Session.SignalListener, Session.ReconnectionListener, Session.ArchiveListener{
     private static RNOpenTokSessionManager instance = null;
     private ReactApplicationContext mContext;
-    private String mApiKey;
     private HashMap<String, Session> mSessions;
     private HashMap<String, RNOpenTokSubscriberView> mSubscribers;
     private HashMap<String, RNOpenTokPublisherView> mPublishers;
 
-    private RNOpenTokSessionManager(ReactApplicationContext context, String apiKey) {
+    private RNOpenTokSessionManager(ReactApplicationContext context) {
         this.mSessions = new HashMap<>();
         this.mSubscribers = new HashMap<String, RNOpenTokSubscriberView>();
         this.mPublishers = new HashMap<String, RNOpenTokPublisherView>();
-        this.mApiKey = apiKey;
         this.mContext = context;
     }
 
     static RNOpenTokSessionManager initSessionManager(ReactApplicationContext context) {
         if (instance == null) {
-            String apiKey = "";
-            ApplicationInfo ai = null;
-            try {
-                ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                apiKey = ai.metaData.get("OPENTOK_API_KEY").toString();
-            } catch (PackageManager.NameNotFoundException | NullPointerException e) {
-                e.printStackTrace();
-            }
-            instance = new RNOpenTokSessionManager(context, apiKey);
+            instance = new RNOpenTokSessionManager(context);
         }
         return instance;
     }
@@ -51,8 +41,8 @@ public class RNOpenTokSessionManager implements Session.SessionListener, Session
         return RNOpenTokSessionManager.initSessionManager(null);
     }
 
-    public Session connectToSession(String sessionId, String token) {
-        Session session = new Session(this.mContext, this.mApiKey, sessionId);
+    public Session connectToSession(String sessionId, String token, String apiKey) {
+        Session session = new Session(this.mContext, apiKey, sessionId);
         session.connect(token);
         this.mSessions.put(sessionId, session);
 
